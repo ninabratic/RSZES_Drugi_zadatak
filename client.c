@@ -16,11 +16,11 @@ int main(int argc, char **argv)
     char recvBuff[1024];
     struct sockaddr_in serv_addr;
     
-    static struct termios oldt, newt;
-    tcgetattr( STDIN_FILENO, &oldt);
-    newt = oldt;
-    newt.c_lflag &= ~(ICANON);          
-    tcsetattr( STDIN_FILENO, TCSANOW, &newt);
+    static struct termios oldt, newt;  //strukture za opisivanje terminala komunikacije
+    tcgetattr( STDIN_FILENO, &oldt); // cita podesavanja o terminalu i stavi ih u oldt
+    newt = oldt; 
+    newt.c_lflag &= ~(ICANON); // ako je flag postavljen radice po liniji, \n         
+    tcsetattr( STDIN_FILENO, TCSANOW, &newt); 
     
     if(argc != 2)
     {
@@ -29,7 +29,7 @@ int main(int argc, char **argv)
     }
  
     memset(recvBuff, 0,sizeof(recvBuff));
-    if((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+    if((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) // domen, tip, protokol
     {
         printf("\n Error : Could not create socket \n");
         return -1;
@@ -38,13 +38,13 @@ int main(int argc, char **argv)
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_port = htons(5001);
     
-    if(inet_pton(AF_INET, argv[1], &serv_addr.sin_addr)<=0)
+    if(inet_pton(AF_INET, argv[1], &serv_addr.sin_addr)<=0) // konvertuje iz stringa u binarno prvi argm. programa, ip adresa
     {
         printf("\n inet_pton error occured\n");
         return -1;
     }
 
-    if(connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
+    if(connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) 
     {
         printf("\n Error : Connect Failed \n");
         return -1;
@@ -61,6 +61,6 @@ int main(int argc, char **argv)
 		        break;
 	    	}
 	 }
-    tcsetattr( STDIN_FILENO, TCSANOW, &oldt);
+    tcsetattr( STDIN_FILENO, TCSANOW, &oldt); // terminal control set attribute 
     return 0;
 }
